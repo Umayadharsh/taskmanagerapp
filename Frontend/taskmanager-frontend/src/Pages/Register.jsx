@@ -1,98 +1,98 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../utils/api";
 
-export default function Register(){
-
-  const [name,setName] = useState("");
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-
+export default function Register() {
   const navigate = useNavigate();
 
-  const handleSubmit = async(e)=>{
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    try{
+    try {
+      await api.post("/auth/register", {
+        name,
+        email,
+        password,
+      });
 
-      await api.post("/auth/register",{name,email,password});
-      navigate("/login");
+      navigate("/dashboard");
+    } catch (err) {
+      const message =
+        err.response?.data?.errors?.[0]?.message ||
+        err.response?.data?.message ||
+        "Registration failed";
 
-    }catch(err){
-      alert("Registration failed");
+      setError(message);
     }
-  }
+  };
 
-  return(
-
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
-      onSubmit={handleSubmit}
-      className="bg-white p-8 shadow-lg rounded w-96"
+        onSubmit={handleRegister}
+        className="bg-white p-8 rounded-lg shadow-md w-96"
       >
+        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
 
-        <h2 className="text-xl font-bold mb-4">
-          Register
-        </h2>
+        {error && (
+          <div className="bg-red-100 text-red-600 p-2 mb-4 rounded">
+            {error}
+          </div>
+        )}
 
         <input
-        className="border p-2 w-full mb-3"
-        placeholder="Name"
-        value={name}
-        onChange={(e)=>setName(e.target.value)}
+          type="text"
+          placeholder="Name"
+          className="w-full p-2 border mb-4 rounded"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
         />
 
         <input
-        className="border p-2 w-full mb-3"
-        placeholder="Email"
-        value={email}
-        onChange={(e)=>setEmail(e.target.value)}
+          type="email"
+          placeholder="Email"
+          className="w-full p-2 border mb-4 rounded"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
 
         <input
-        className="border p-2 w-full mb-4"
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e)=>setPassword(e.target.value)}
+          type="password"
+          placeholder="Password"
+          className="w-full p-2 border mb-2 rounded"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
         />
+
+        <p className="text-sm text-gray-500 mb-4">
+          Password must be at least 8 characters and include:
+          <br />• 1 uppercase letter
+          <br />• 1 lowercase letter
+          <br />• 1 number
+        </p>
 
         <button
-        className="bg-indigo-600 text-white w-full py-2 rounded"
+          type="submit"
+          className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
         >
           Register
         </button>
 
-        <p className="mt-4 text-center">
-  Already have an account?
-  <span
-    className="text-indigo-600 cursor-pointer ml-1"
-    onClick={()=>navigate("/login")}
-  >
-    Login
-  </span>
-</p>
-<div className="mb-3">
-  <input
-    type="password"
-    placeholder="Password"
-    className="w-full p-2 border rounded"
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-  />
-
-  <p className="text-sm text-gray-500 mt-1">
-    Password must be at least 8 characters and include:
-    <br />• 1 uppercase letter
-    <br />• 1 lowercase letter
-    <br />• 1 number
-  </p>
-</div>
+        <p className="text-center mt-4">
+          Already have an account?{" "}
+          <Link to="/" className="text-blue-600">
+            Login
+          </Link>
+        </p>
       </form>
-
     </div>
-
-  )
-
+  );
 }
