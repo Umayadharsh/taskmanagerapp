@@ -24,8 +24,6 @@ app.use(
     credentials: true
   })
 );
-
-app.options("*", cors());
 /* ───────────────── SECURITY MIDDLEWARE ───────────────── */
 
 app.use(helmet());
@@ -34,18 +32,10 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-
-      if (
-        origin.includes("localhost") ||
-        origin.includes("vercel.app")
-      ) {
-        return callback(null, true);
-      }
-
-      return callback(new Error(`CORS policy: Origin ${origin} not allowed`));
-    },
+    origin: [
+      "http://localhost:5173",
+      "https://taskmanagerapp-frontendapp.netlify.app"
+    ],
     credentials: true
   })
 );
