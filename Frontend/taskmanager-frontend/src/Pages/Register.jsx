@@ -73,7 +73,22 @@ export default function Register(){
     Login
   </span>
 </p>
+<div className="mb-3">
+  <input
+    type="password"
+    placeholder="Password"
+    className="w-full p-2 border rounded"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+  />
 
+  <p className="text-sm text-gray-500 mt-1">
+    Password must be at least 8 characters and include:
+    <br />• 1 uppercase letter
+    <br />• 1 lowercase letter
+    <br />• 1 number
+  </p>
+</div>
       </form>
 
     </div>
