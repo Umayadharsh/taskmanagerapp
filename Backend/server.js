@@ -23,11 +23,8 @@ app.use(helmet());
 app.use(
   cors({
     origin: function (origin, callback) {
-
-      // Allow requests without origin (Postman, mobile apps)
       if (!origin) return callback(null, true);
 
-      // Allow localhost and Vercel deployments
       if (
         origin.includes("localhost") ||
         origin.includes("vercel.app")
@@ -42,7 +39,7 @@ app.use(
 );
 
 // Handle preflight requests
-app.options("*", cors());
+app.options(/.*/, cors());
 
 /* ───────────────── RATE LIMITING ───────────────── */
 
