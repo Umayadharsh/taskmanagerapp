@@ -12,25 +12,20 @@ export default function Dashboard() {
 
   const limit = 5;
 
-  const loadTasks = async () => {
+ const loadStats = async () => {
+  try {
+    const res = await api.get("/tasks/stats");
 
-    try {
+    setStats({
+      total: res.data?.data?.total || 0,
+      completed: res.data?.data?.completed || 0,
+      pending: res.data?.data?.pending || 0
+    });
 
-      const params = { limit };
-
-      if (search) params.search = search;
-      if (status) params.status = status;
-
-      const res = await api.get("/tasks", { params });
-
-      setTasks(res.data?.data?.tasks || []);
-
-    } catch (err) {
-      console.error(err);
-    }
-
-  };
-
+  } catch (err) {
+    console.error(err);
+  }
+};
   const loadStats = async () => {
 
     try {
@@ -214,21 +209,21 @@ export default function Dashboard() {
           <div className="bg-white p-4 rounded-lg shadow text-center">
             <p className="text-gray-500 text-sm">Total Tasks</p>
             <h3 className="text-xl font-bold text-indigo-600">
-              {stats.total || 0}
+              {stats.total ?? 0}
             </h3>
           </div>
 
           <div className="bg-white p-4 rounded-lg shadow text-center">
             <p className="text-gray-500 text-sm">Completed</p>
             <h3 className="text-xl font-bold text-green-600">
-              {stats.completed || 0}
+              {stats.completed ?? 0}
             </h3>
           </div>
 
           <div className="bg-white p-4 rounded-lg shadow text-center">
             <p className="text-gray-500 text-sm">Pending</p>
             <h3 className="text-xl font-bold text-orange-500">
-              {stats.pending || 0}
+              {stats.pending ?? 0}
             </h3>
           </div>
 

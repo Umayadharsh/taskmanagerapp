@@ -20,7 +20,7 @@ export default function Register() {
         password,
       });
 
-      navigate("/dashboard");
+      navigate("/");
     } catch (err) {
       const message =
         err.response?.data?.errors?.[0]?.message ||
