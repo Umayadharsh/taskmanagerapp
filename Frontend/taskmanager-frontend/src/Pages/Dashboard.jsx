@@ -9,27 +9,30 @@ export default function Dashboard() {
   const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
-  
 
   const limit = 5;
 
- const loadTasks = async () => {
-  try {
+  const loadTasks = async () => {
 
-    const res = await api.get("/tasks",{
-      params:{
-        ...(search && {search}),
-        ...(status && {status})
-      }
-    });
+    try {
 
-    setTasks(res.data?.data?.tasks || res.data?.tasks || []);
+      const params = { limit };
 
-  } catch(err){
-    console.error(err);
-  }
-};
+      if (search) params.search = search;
+      if (status) params.status = status;
+
+      const res = await api.get("/tasks", { params });
+
+      setTasks(res.data?.data?.tasks || []);
+
+    } catch (err) {
+      console.error(err);
+    }
+
+  };
+
   const loadStats = async () => {
+
     try {
 
       const res = await api.get("/tasks/stats");
@@ -38,24 +41,32 @@ export default function Dashboard() {
     } catch (err) {
       console.error(err);
     }
+
   };
 
   useEffect(() => {
     loadTasks();
     loadStats();
-  }, [page, search, status]);
+  }, [search, status]);
 
- const deleteTask = async(id)=>{
-  await api.delete(`/tasks/${id}`);
-  loadTasks();
-  loadStats();
-}
+  const deleteTask = async (id) => {
 
-const completeTask = async(id)=>{
-  await api.patch(`/tasks/${id}`,{status:"completed"});
-  loadTasks();
-  loadStats();
-}
+    await api.delete(`/tasks/${id}`);
+    loadTasks();
+    loadStats();
+
+  };
+
+  const completeTask = async (id) => {
+
+    await api.patch(`/tasks/${id}`, {
+      status: "completed"
+    });
+
+    loadTasks();
+    loadStats();
+
+  };
 
   const getPriorityColor = (priority) => {
 
@@ -87,10 +98,13 @@ const completeTask = async(id)=>{
 
         {/* Task Form */}
 
-        <TaskForm reload={()=>{
-  loadTasks();
-  loadStats();
-}} />
+        <TaskForm
+          reload={() => {
+            loadTasks();
+            loadStats();
+          }}
+        />
+
         {/* Search + Filter */}
 
         <div className="flex gap-3 mb-6">
@@ -100,10 +114,7 @@ const completeTask = async(id)=>{
             placeholder="Search tasks..."
             className="flex-1 px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
             value={search}
-            onChange={(e)=>{
- setSearch(e.target.value)
- setPage(1)
-}}
+            onChange={(e) => setSearch(e.target.value)}
           />
 
           <select
@@ -111,10 +122,12 @@ const completeTask = async(id)=>{
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
+
             <option value="">All</option>
             <option value="todo">Todo</option>
             <option value="in-progress">In Progress</option>
             <option value="completed">Completed</option>
+
           </select>
 
         </div>
@@ -194,9 +207,6 @@ const completeTask = async(id)=>{
 
         ))}
 
-        {/* Pagination */}
-
-       
         {/* Stats */}
 
         <div className="grid grid-cols-3 gap-4 mt-10">
