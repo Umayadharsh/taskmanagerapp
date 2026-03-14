@@ -1,11 +1,28 @@
-// ── CORS ─────────────────────────────────────────────────────────────────
+require('dotenv').config();
+
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+
+const authRoutes = require('./routes/auth');
+const taskRoutes = require('./routes/tasks');
+const { errorResponse } = require('./utils/response');
+
+const app = express();   // ✅ CREATE APP FIRST
+
+// Security
+app.use(helmet());
+
+// CORS
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow requests without origin (Postman)
       if (!origin) return callback(null, true);
 
-      // allow localhost and vercel deployments
       if (
         origin.includes("localhost") ||
         origin.includes("vercel.app")
