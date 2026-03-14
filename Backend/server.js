@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
+const cors = require("cors");
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
@@ -13,7 +13,7 @@ const taskRoutes = require('./routes/tasks');
 const { errorResponse } = require('./utils/response');
 
 const app = express();
-const cors = require("cors");
+
 
 app.use(
   cors({
@@ -24,6 +24,7 @@ app.use(
     credentials: true
   })
 );
+
 app.options("*", cors());
 /* ───────────────── SECURITY MIDDLEWARE ───────────────── */
 
