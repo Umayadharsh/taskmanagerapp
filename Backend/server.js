@@ -13,7 +13,18 @@ const taskRoutes = require('./routes/tasks');
 const { errorResponse } = require('./utils/response');
 
 const app = express();
+const cors = require("cors");
 
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://taskmanagerapp-frontendapp.netlify.app"
+    ],
+    credentials: true
+  })
+);
+app.options("*", cors());
 /* ───────────────── SECURITY MIDDLEWARE ───────────────── */
 
 app.use(helmet());
