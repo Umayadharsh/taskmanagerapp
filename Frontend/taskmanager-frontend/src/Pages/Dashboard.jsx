@@ -211,30 +211,7 @@ const loadStats = async () => {
 
         {/* Stats */}
 
-        <div className="grid grid-cols-3 gap-4 mt-10">
-
-          <div className="bg-white p-4 rounded-lg shadow text-center">
-            <p className="text-gray-500 text-sm">Total Tasks</p>
-            <h3 className="text-xl font-bold text-indigo-600">
-              {stats.total ?? 0}
-            </h3>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg shadow text-center">
-            <p className="text-gray-500 text-sm">Completed</p>
-            <h3 className="text-xl font-bold text-green-600">
-              {stats.completed ?? 0}
-            </h3>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg shadow text-center">
-            <p className="text-gray-500 text-sm">Pending</p>
-            <h3 className="text-xl font-bold text-orange-500">
-              {stats.pending ?? 0}
-            </h3>
-          </div>
-
-        </div>
+        
 
       </div>
 
