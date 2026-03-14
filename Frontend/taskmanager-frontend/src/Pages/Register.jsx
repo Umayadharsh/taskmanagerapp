@@ -80,11 +80,12 @@ export default function Register() {
         </p>
 
         <button
-          type="submit"
-          className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
-        >
-          Register
-        </button>
+  type="submit"
+  onClick={handleRegister}
+  className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
+>
+  Register
+</button>
 
         <p className="text-center mt-4">
           Already have an account?{" "}
