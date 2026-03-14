@@ -1,14 +1,20 @@
-require("dotenv").config();
+// ── CORS ─────────────────────────────────────────────────────────────────
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests without origin (Postman)
+      if (!origin) return callback(null, true);
 
-const app = require("./app");
-const connectDB = require("./config/db");
+      // allow localhost and vercel deployments
+      if (
+        origin.includes("localhost") ||
+        origin.includes("vercel.app")
+      ) {
+        return callback(null, true);
+      }
 
-console.log("ENV VALUE:", process.env.MONGO_URI);
-
-connectDB();
-
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+      return callback(new Error(`CORS policy: Origin ${origin} not allowed`));
+    },
+    credentials: true
+  })
+);
