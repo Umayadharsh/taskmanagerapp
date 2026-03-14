@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../utils/api";
 import Navbar from "../components/Navbar";
+import TaskForm from "../components/TaskForm";
 
 export default function Dashboard() {
 
@@ -15,6 +16,7 @@ export default function Dashboard() {
 
   const loadTasks = async () => {
     try {
+
       const res = await api.get("/tasks", {
         params: { page, limit, search, status }
       });
@@ -29,8 +31,10 @@ export default function Dashboard() {
 
   const loadStats = async () => {
     try {
+
       const res = await api.get("/tasks/stats");
       setStats(res.data.data);
+
     } catch (err) {
       console.error(err);
     }
@@ -42,18 +46,54 @@ export default function Dashboard() {
   }, [page, search, status]);
 
   const deleteTask = async (id) => {
-    await api.delete(`/tasks/${id}`);
-    loadTasks();
-    loadStats();
+
+    try {
+
+      await api.delete(`/tasks/${id}`);
+      loadTasks();
+      loadStats();
+
+    } catch (err) {
+      console.error(err);
+    }
+
   };
 
   const completeTask = async (id) => {
-    await api.patch(`/tasks/${id}`, { status: "completed" });
-    loadTasks();
-    loadStats();
+
+    try {
+
+      await api.patch(`/tasks/${id}`, {
+        status: "completed"
+      });
+
+      loadTasks();
+      loadStats();
+
+    } catch (err) {
+      console.error(err);
+    }
+
+  };
+
+  const getPriorityColor = (priority) => {
+
+    if (priority === "high") return "bg-red-100 text-red-600";
+    if (priority === "medium") return "bg-yellow-100 text-yellow-600";
+    return "bg-green-100 text-green-600";
+
+  };
+
+  const getStatusColor = (status) => {
+
+    if (status === "completed") return "bg-green-100 text-green-700";
+    if (status === "in-progress") return "bg-blue-100 text-blue-700";
+    return "bg-gray-100 text-gray-700";
+
   };
 
   return (
+
     <div className="min-h-screen bg-gray-100">
 
       <Navbar />
@@ -63,6 +103,15 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Task Dashboard
         </h1>
+
+        {/* Task Form */}
+
+        <TaskForm
+          reload={() => {
+            loadTasks();
+            loadStats();
+          }}
+        />
 
         {/* Search + Filter */}
 
@@ -89,9 +138,18 @@ export default function Dashboard() {
 
         </div>
 
-        {/* Tasks */}
+        {/* Task List */}
+
+        {tasks.length === 0 && (
+
+          <div className="text-center text-gray-500 bg-white p-6 rounded shadow">
+            No tasks found
+          </div>
+
+        )}
 
         {tasks.map((task) => (
+
           <div
             key={task._id}
             className="bg-white p-5 rounded-xl shadow-sm border hover:shadow-md transition mb-4"
@@ -100,6 +158,7 @@ export default function Dashboard() {
             <div className="flex justify-between items-start">
 
               <div>
+
                 <h3 className="text-lg font-semibold text-gray-800">
                   {task.title}
                 </h3>
@@ -108,20 +167,35 @@ export default function Dashboard() {
                   {task.description}
                 </p>
 
-                <span className="inline-block mt-3 text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-700">
-                  {task.status}
-                </span>
+                <div className="flex gap-2 mt-3">
+
+                  <span
+                    className={`text-xs px-3 py-1 rounded-full ${getStatusColor(task.status)}`}
+                  >
+                    {task.status}
+                  </span>
+
+                  <span
+                    className={`text-xs px-3 py-1 rounded-full ${getPriorityColor(task.priority)}`}
+                  >
+                    {task.priority}
+                  </span>
+
+                </div>
+
               </div>
 
               <div className="flex gap-4">
 
                 {task.status !== "completed" && (
+
                   <button
                     className="text-green-600 font-medium hover:text-green-800"
                     onClick={() => completeTask(task._id)}
                   >
                     Complete
                   </button>
+
                 )}
 
                 <button
@@ -136,6 +210,7 @@ export default function Dashboard() {
             </div>
 
           </div>
+
         ))}
 
         {/* Pagination */}
@@ -143,7 +218,7 @@ export default function Dashboard() {
         <div className="flex justify-center items-center gap-4 mt-6">
 
           <button
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
           >
@@ -155,7 +230,7 @@ export default function Dashboard() {
           </span>
 
           <button
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
             disabled={page === totalPages}
             onClick={() => setPage(page + 1)}
           >
@@ -192,6 +267,9 @@ export default function Dashboard() {
         </div>
 
       </div>
+
     </div>
+
   );
+
 }
