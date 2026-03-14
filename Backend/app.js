@@ -13,6 +13,10 @@ const { errorResponse } = require('./utils/response');
 
 const app = express();
 
+app.get('/', (req, res) => {
+  res.send('Task Manager API is running 🚀');
+});
+
 // ── Security middleware ──────────────────────────────────────────────────
 app.use(helmet());
 
