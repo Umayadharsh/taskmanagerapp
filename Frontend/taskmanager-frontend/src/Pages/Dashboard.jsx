@@ -9,27 +9,23 @@ export default function Dashboard() {
   const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  
 
   const limit = 5;
 
-  const loadTasks = async () => {
+ const loadTasks = async () => {
   try {
 
-    const res = await api.get("/tasks", {
-      params: {
-        page,
-        limit,
-        ...(search && { search }),
-        ...(status && { status })
+    const res = await api.get("/tasks",{
+      params:{
+        ...(search && {search}),
+        ...(status && {status})
       }
     });
 
-    setTasks(res.data.data.tasks);
-    setTotalPages(res.data.data.pagination.pages);
+    setTasks(res.data?.data?.tasks || res.data?.tasks || []);
 
-  } catch (err) {
+  } catch(err){
     console.error(err);
   }
 };
@@ -37,7 +33,7 @@ export default function Dashboard() {
     try {
 
       const res = await api.get("/tasks/stats");
-      setStats(res.data.data);
+      setStats(res.data?.data || res.data);
 
     } catch (err) {
       console.error(err);
@@ -49,36 +45,17 @@ export default function Dashboard() {
     loadStats();
   }, [page, search, status]);
 
-  const deleteTask = async (id) => {
+ const deleteTask = async(id)=>{
+  await api.delete(`/tasks/${id}`);
+  loadTasks();
+  loadStats();
+}
 
-    try {
-
-      await api.delete(`/tasks/${id}`);
-      loadTasks();
-      loadStats();
-
-    } catch (err) {
-      console.error(err);
-    }
-
-  };
-
-  const completeTask = async (id) => {
-
-    try {
-
-      await api.patch(`/tasks/${id}`, {
-        status: "completed"
-      });
-
-      loadTasks();
-      loadStats();
-
-    } catch (err) {
-      console.error(err);
-    }
-
-  };
+const completeTask = async(id)=>{
+  await api.patch(`/tasks/${id}`,{status:"completed"});
+  loadTasks();
+  loadStats();
+}
 
   const getPriorityColor = (priority) => {
 
@@ -110,13 +87,10 @@ export default function Dashboard() {
 
         {/* Task Form */}
 
-        <TaskForm
-          reload={() => {
-            loadTasks();
-            loadStats();
-          }}
-        />
-
+        <TaskForm reload={()=>{
+  loadTasks();
+  loadStats();
+}} />
         {/* Search + Filter */}
 
         <div className="flex gap-3 mb-6">
@@ -222,30 +196,7 @@ export default function Dashboard() {
 
         {/* Pagination */}
 
-        <div className="flex justify-center items-center gap-4 mt-6">
-
-          <button
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-            disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-          >
-            Prev
-          </button>
-
-          <span className="text-gray-700 font-medium">
-            Page {page} / {totalPages}
-          </span>
-
-          <button
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-            disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-          >
-            Next
-          </button>
-
-        </div>
-
+       
         {/* Stats */}
 
         <div className="grid grid-cols-3 gap-4 mt-10">
