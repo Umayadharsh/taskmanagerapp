@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Navbar from "../components/Navbar";
-import TaskForm from "../components/TaskForm";
-import TaskList from "../components/TaskList";
-import TaskStats from "../components/TaskStats";
+import Navbar from "../components/Navbar.jsx";
+import TaskForm from "../components/TaskForm.jsx";
+import TaskList from "../components/TaskList.jsx";
+import TaskStats from "../components/TaskStats.jsx";
 
 export default function Dashboard(){
 
