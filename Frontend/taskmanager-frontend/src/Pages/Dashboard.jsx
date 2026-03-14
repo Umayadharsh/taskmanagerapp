@@ -15,20 +15,24 @@ export default function Dashboard() {
   const limit = 5;
 
   const loadTasks = async () => {
-    try {
+  try {
 
-      const res = await api.get("/tasks", {
-        params: { page, limit, search, status }
-      });
+    const res = await api.get("/tasks", {
+      params: {
+        page,
+        limit,
+        ...(search && { search }),
+        ...(status && { status })
+      }
+    });
 
-      setTasks(res.data.data.tasks);
-      setTotalPages(res.data.data.pagination.pages);
+    setTasks(res.data.data.tasks);
+    setTotalPages(res.data.data.pagination.pages);
 
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
+  } catch (err) {
+    console.error(err);
+  }
+};
   const loadStats = async () => {
     try {
 
@@ -122,7 +126,10 @@ export default function Dashboard() {
             placeholder="Search tasks..."
             className="flex-1 px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e)=>{
+ setSearch(e.target.value)
+ setPage(1)
+}}
           />
 
           <select
