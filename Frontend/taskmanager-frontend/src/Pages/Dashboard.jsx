@@ -12,8 +12,27 @@ export default function Dashboard() {
 
   const limit = 5;
 
- const loadStats = async () => {
+const loadTasks = async () => {
   try {
+
+    const params = { limit };
+
+    if (search) params.search = search;
+    if (status) params.status = status;
+
+    const res = await api.get("/tasks", { params });
+
+    setTasks(res.data?.data?.tasks || []);
+
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
+const loadStats = async () => {
+  try {
+
     const res = await api.get("/tasks/stats");
 
     setStats({
@@ -26,18 +45,6 @@ export default function Dashboard() {
     console.error(err);
   }
 };
-  const loadStats = async () => {
-
-    try {
-
-      const res = await api.get("/tasks/stats");
-      setStats(res.data?.data || res.data);
-
-    } catch (err) {
-      console.error(err);
-    }
-
-  };
 
   useEffect(() => {
     loadTasks();
